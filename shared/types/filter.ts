@@ -13,5 +13,6 @@ export interface Filter {
     peerReviewed: boolean;
     isOa: boolean;
     artisticWorkOnly: boolean;
+    sortBy?: 'year' | 'title' | 'publication_type_id';
 
 }

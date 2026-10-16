@@ -89,6 +89,23 @@ const body: any = {
     })
   }
 
+  // --- Sorting ---
+  const sortFields: Record<string, string> = {
+    year: 'pubyear.keyword',
+    title: 'title.sort',
+    publication_type_id: 'publication_type_id'
+  }
+
+  const sortBy = filter.sortBy ?? 'year'
+
+  if (sortFields[sortBy]) {
+    body.sort = [{
+      [sortFields[sortBy]]: {
+        order: sortBy === 'year' ? 'desc' : 'asc'
+      }
+    }]
+  }
+
   // --- Example: handle free-text search ---
   if (filter.searchTerm?.trim()) {
     body.query.bool.must = [

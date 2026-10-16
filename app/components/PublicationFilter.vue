@@ -7,6 +7,12 @@ import Multiselect from '@vueform/multiselect'
 // Parent owns the filter object via v-model
 const filters = defineModel<Filter>({ required: true })
 
+const sortOptions = [
+  { label: 'År', value: 'year' },
+  { label: 'Titel', value: 'title' },
+  { label: 'Publikationstyp', value: 'publication_type_id' }
+]
+
 // Props to receive the actual year range from the parent
 const props = defineProps<{
   yearRange?: { minYear: number; maxYear: number }
@@ -15,6 +21,10 @@ const props = defineProps<{
 
 
 onMounted(async () => {
+  if (!filters.value.sortBy) {
+    filters.value.sortBy = 'year'
+  }
+
   await Promise.all([
     loadInstitutions(),
     loadPublicationTypes()
@@ -442,6 +452,20 @@ const numericInputFilter = (input: string): boolean => {
           :can-clear="true"
           :searchable="true"
           :clear-on-select="true"
+        />
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <div class="field">
+        <label for="sort-by">Sortessra</label>
+        <Multiselect
+          id="sort-by"
+          v-model="filters.sortBy"
+          :options="sortOptions"
+          :searchable="false"
+          :allow-empty="false"
+          :can-clear="false" 
         />
       </div>
     </div>
