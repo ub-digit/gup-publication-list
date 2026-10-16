@@ -15,8 +15,12 @@ const props = defineProps<{
 
 
 onMounted(async () => {
-  await loadInstitutions()
-})  
+  await Promise.all([
+    loadInstitutions(),
+    loadPublicationTypes()
+  ])
+})
+
 
 // --- Load helpers -------------------------------------------------
 
@@ -89,6 +93,20 @@ const loadSeries = async (): Promise<{ label: string; value: number }[]> => {
     return response || []
   } catch (error) {
     console.error('Failed to load series:', error)
+    return []
+  }
+}
+
+
+const loadPublicationTypes = async (): Promise<{ label: string; value: number }[]> => {
+  try {
+    const response = await $fetch('/api/publications/publicationtype', {
+      method: 'GET',
+    })
+
+    return response || []
+  } catch (error) {
+    console.error('Failed to load publication types:', error)
     return []
   }
 }
@@ -366,7 +384,7 @@ const numericInputFilter = (input: string): boolean => {
         <Multiselect
           id="publication-type"
           v-model="filters.publicationTypeIds"
-          :options="[]"
+          :options="loadPublicationTypes"
           placeholder="Publikationstyp"
           :can-clear="true"
           :searchable="true"
