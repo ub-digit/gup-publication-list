@@ -458,7 +458,7 @@ const numericInputFilter = (input: string): boolean => {
 
     <div class="filters-row">
       <div class="field">
-        <label for="sort-by">Sortessra</label>
+        <label for="sort-by">Sortera</label>
         <Multiselect
           id="sort-by"
           v-model="filters.sortBy"

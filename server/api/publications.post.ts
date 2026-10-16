@@ -141,7 +141,7 @@ const body: any = {
   if (filter.artisticWorkOnly === true || filter.artisticWorkOnly === 'true') {
     body.query.bool.filter.push({
       term: {
-        'ref_value.keyword': 'ISREF'   // prefer .keyword if it exists
+        'artistic_basis': true   // prefer .keyword if it exists
       }
     })
   }
