@@ -72,6 +72,23 @@ const body: any = {
     })
   }
 
+  // --- Publication type filter ---
+  const publicationTypeIds = filter.publicationTypeIds
+    ? (Array.isArray(filter.publicationTypeIds)
+        ? filter.publicationTypeIds
+        : String(filter.publicationTypeIds).split(','))
+        .map((id: string | number) => Number(id))
+        .filter(Number.isFinite)
+    : []
+
+  if (publicationTypeIds.length > 0) {
+    body.query.bool.filter.push({
+      terms: {
+        publication_type_id: publicationTypeIds
+      }
+    })
+  }
+
   // --- Example: handle free-text search ---
   if (filter.searchTerm?.trim()) {
     body.query.bool.must = [
@@ -141,7 +158,6 @@ const body: any = {
   }
 
   // Add more filter fields here as you grow the filter object
-  // if (filter.publicationTypes?.length) { ... }
 
   console.log('ES query body:', JSON.stringify(body, null, 2))
 
