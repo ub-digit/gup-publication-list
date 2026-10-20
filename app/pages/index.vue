@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PublicationFilter from '~/components/PublicationFilter.vue'
 import type { Filter } from '#shared/types/filter'
+import type { Person } from '#shared/types/person'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,12 +28,23 @@ const pageFromQuery = (query: typeof route.query): number => {
 const values = <T>(value: T | T[] | null | undefined): T[] =>
   Array.isArray(value) ? value : value == null ? [] : [value]
 
-const filterFromQuery = (query: typeof route.query): Filter => {
+const sameIds = (left: number[], right: number[]) => {
+  if (left.length !== right.length) return false
+
+  const sortedLeft = [...left].sort((a, b) => a - b)
+  const sortedRight = [...right].sort((a, b) => a - b)
+  return sortedLeft.every((id, index) => id === sortedRight[index])
+}
+
+const filterFromQuery = (query: typeof route.query, selectedPersons: Person[] = []): Filter => {
   const sortBy = queryValue(query.sortBy)
+  const gupPersonIds = numberValues(query.gupPersonIds)
+  const selectedPersonGupIds = selectedPersons.flatMap(person => person.gupPersonIds || [])
+  const shouldPreserveSelectedPersons = sameIds(selectedPersonGupIds, gupPersonIds)
 
   return {
     searchTerm: queryValue(query.searchTerm) ?? '',
-    selectedPersons: [],
+    selectedPersons: shouldPreserveSelectedPersons ? selectedPersons : [],
     startYear: numberValue(query.startYear),
     endYear: numberValue(query.endYear),
     publicationTypeIds: numberValues(query.publicationTypeIds),
@@ -40,7 +52,7 @@ const filterFromQuery = (query: typeof route.query): Filter => {
     facultyId: numberValue(query.facultyId),
     seriesIds: numberValues(query.seriesIds),
     projectIds: numberValues(query.projectIds),
-    gupPersonIds: numberValues(query.gupPersonIds),
+    gupPersonIds,
     peerReviewed: queryValue(query.peerReviewed) === 'true',
     isOa: queryValue(query.isOa) === 'true',
     artisticWorkOnly: queryValue(query.artisticWorkOnly) === 'true',
@@ -79,7 +91,7 @@ let applyingRoute = false
 
 watch(() => route.query, (query) => {
   applyingRoute = true
-  const nextFilter = filterFromQuery(query)
+  const nextFilter = filterFromQuery(query, filter.value.selectedPersons)
   if (JSON.stringify(nextFilter) !== JSON.stringify(filter.value)) {
     filter.value = nextFilter
   }

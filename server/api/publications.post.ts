@@ -1,8 +1,6 @@
 // server/api/publications.post.ts
 export default defineEventHandler(async (event) => {
-  console.log('Fetching publications from Elasticsearch...')
 
-  // Read the entire filter object from the POST body
   const filter = await readBody(event) || {}
 
   // Elasticsearch pagination is zero-based (`from`), while the API accepts a
@@ -191,7 +189,11 @@ const body: any = {
 
   console.log('ES query body:', JSON.stringify(body, null, 2))
 
-  const response = await fetch('http://localhost:9200/publications/_search', {
+  const config = useRuntimeConfig(event)
+  
+
+
+  const response = await fetch(`${config.elasticsearchUrl}/publications/_search`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
