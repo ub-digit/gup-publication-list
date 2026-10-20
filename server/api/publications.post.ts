@@ -5,10 +5,21 @@ export default defineEventHandler(async (event) => {
   // Read the entire filter object from the POST body
   const filter = await readBody(event) || {}
 
+  // Elasticsearch pagination is zero-based (`from`), while the API accepts a
+  // one-based page number. Keep the page size bounded to avoid an expensive
+  // request caused by an invalid client value.
+  const toPositiveInteger = (value: unknown, fallback: number) => {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : fallback
+  }
+  const page = toPositiveInteger(filter.page, 1)
+  const pageSize = Math.min(100, toPositiveInteger(filter.pageSize, 50))
+  const from = (page - 1) * pageSize
 
 // Build the base ES query
 const body: any = {
-  size: 50,
+  from,
+  size: pageSize,
   track_total_hits: true,
   query: {
     bool: {
@@ -205,5 +216,12 @@ const body: any = {
   const total = typeof data.hits.total === 'number' ? data.hits.total : data.hits.total?.value ?? 0
 
   console.log(`Found ${total} publications. Min year: ${minYear}, Max year: ${maxYear}`)
-  return { publications, range, total}
+  return {
+    publications,
+    range,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize)
+  }
 })

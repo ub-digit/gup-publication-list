@@ -19,6 +19,11 @@ const numberValue = (value: string | string[] | null | undefined): number | null
   return Number.isFinite(parsed) ? parsed : null
 }
 
+const pageFromQuery = (query: typeof route.query): number => {
+  const page = numberValue(query.page)
+  return page && page >= 1 ? Math.floor(page) : 1
+}
+
 const values = <T>(value: T | T[] | null | undefined): T[] =>
   Array.isArray(value) ? value : value == null ? [] : [value]
 
@@ -68,27 +73,71 @@ const filterToQuery = (value: Filter) => {
 }
 
 const filter = ref<Filter>(filterFromQuery(route.query))
+const currentPage = ref(pageFromQuery(route.query))
+const pageSize = 20
+let applyingRoute = false
 
 watch(() => route.query, (query) => {
+  applyingRoute = true
   const nextFilter = filterFromQuery(query)
   if (JSON.stringify(nextFilter) !== JSON.stringify(filter.value)) {
     filter.value = nextFilter
   }
+  currentPage.value = pageFromQuery(query)
+  void nextTick(() => {
+    applyingRoute = false
+  })
 })
 
-watch(filter, (value) => {
-  const query = filterToQuery(value)
+watch(filter, () => {
+  if (!applyingRoute) {
+    currentPage.value = 1
+  }
+}, { deep: true })
+
+watch([filter, currentPage], ([value, page]) => {
+  if (applyingRoute) return
+
+  const query = {
+    ...filterToQuery(value),
+    ...(page > 1 ? { page: String(page) } : {})
+  }
   if (JSON.stringify(query) !== JSON.stringify(route.query)) {
     void router.replace({ query })
   }
 }, { deep: true })
 
-const { data: publicationsData, pending, error } = usePublications(filter)
+const searchRequest = computed(() => ({
+  ...filter.value,
+  page: currentPage.value,
+  pageSize
+}))
+
+const { data: publicationsData, pending, error } = usePublications(searchRequest)
 
 // Extract publications and range from the response
 const publications = computed(() => publicationsData.value?.publications || [])
 const range = computed(() => publicationsData.value?.range || null)
 const total = computed(() => publicationsData.value?.total ?? 0)
+const totalPages = computed(() => publicationsData.value?.totalPages ?? 0)
+
+watch(totalPages, (pages) => {
+  if (pages > 0 && currentPage.value > pages) {
+    currentPage.value = pages
+  }
+})
+
+const pageNumbers = computed(() => {
+  const firstPage = Math.floor((currentPage.value - 1) / 10) * 10 + 1
+  const lastPage = Math.min(firstPage + 9, totalPages.value)
+  return Array.from({ length: Math.max(0, lastPage - firstPage + 1) }, (_, index) => firstPage + index)
+})
+
+const setPage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
 
 useHead({
   title: 'Gup - Publications',
@@ -135,6 +184,36 @@ useHead({
         :key="publication.id"
         :publication="publication"
       />
+
+      <nav v-if="totalPages > 1" class="pagination" aria-label="Sidnavigering">
+        <button
+          type="button"
+          class="pagination-button pagination-previous"
+          :disabled="currentPage === 1"
+          @click="setPage(currentPage - 1)"
+        >
+          Föreg.
+        </button>
+        <button
+          v-for="page in pageNumbers"
+          :key="page"
+          type="button"
+          class="pagination-button"
+          :class="{ active: page === currentPage }"
+          :aria-current="page === currentPage ? 'page' : undefined"
+          @click="setPage(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          type="button"
+          class="pagination-button pagination-next"
+          :disabled="currentPage === totalPages"
+          @click="setPage(currentPage + 1)"
+        >
+          Nästa
+        </button>
+      </nav>
     </div>
   </div>
 </template>
@@ -152,5 +231,49 @@ useHead({
 .range-info p {
   margin: 0;
   font-weight: 500;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.pagination-button {
+  min-width: 34px;
+  height: 34px;
+  margin-left: -1px;
+  padding: 0 12px;
+  color: #0067b1;
+  background: #fff;
+  border: 1px solid #ddd;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination-button:first-child {
+  margin-left: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+.pagination-button:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.pagination-button:hover:not(:disabled):not(.active) {
+  background: #f5f5f5;
+}
+
+.pagination-button.active {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  background: #0067b1;
+  border-color: #0067b1;
+}
+
+.pagination-button:disabled {
+  color: #999;
+  cursor: not-allowed;
 }
 </style>
