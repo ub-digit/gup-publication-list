@@ -1,11 +1,11 @@
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const searchTerm = body.name
-  const elasticsearchUrl = useRuntimeConfig(event).elasticsearchUrl || 'http://localhost:9200'
+  const config = useRuntimeConfig(event)
 
   console.log('Received search term:', searchTerm)
 
-  const response = await fetch(`${elasticsearchUrl}/persons/_search`, {
+  const response = await fetch(`${config.elasticsearchUrl}/persons/_search`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
   // Count publications for all matched people in one request, then use those
   // counts to promote authors represented in the GUP publication index.
-  const publicationResponse = await fetch(`${elasticsearchUrl}/publications/_search`, {
+  const publicationResponse = await fetch(`${config.elasticsearchUrl}/publications/_search`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

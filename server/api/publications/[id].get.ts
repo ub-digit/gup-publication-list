@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
  const { id } = event.context.params as { id: string }
 
-    // Load publication details from http://localhost:9200/publications/_search
+    // Load publication details from Elasticsearch.
     const config = useRuntimeConfig(event)
     let url = `${config.elasticsearchUrl}/publications/_doc/${id}`
 

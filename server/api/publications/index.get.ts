@@ -1,11 +1,12 @@
 
 
 export default defineEventHandler(async (event) => {
-    // Load list of publications from http://localhost:9200/publications/_search
+    const config = useRuntimeConfig(event)
+    // Load list of publications from Elasticsearch.
 
     console.log('Fetching publications from Elasticsearch...')
 
-    const response = await fetch('http://localhost:9200/publications/_search', {
+    const response = await fetch(`${config.elasticsearchUrl}/publications/_search`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

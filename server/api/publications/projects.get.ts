@@ -1,7 +1,8 @@
 export default defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event)
     console.log('Fetching project data from Elasticsearch...')
 
-    const response = await fetch('http://localhost:9200/projects/_search', {
+    const response = await fetch(`${config.elasticsearchUrl}/projects/_search`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

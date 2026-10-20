@@ -1,5 +1,7 @@
 export default defineEventHandler(async (event) => {
 
+    const config = useRuntimeConfig(event)
+
     const query = getQuery(event)
     const parentId = query.parentId as number | undefined
 
@@ -19,7 +21,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const response = await fetch('http://localhost:9200/departments/_search', {
+    const response = await fetch(`${config.elasticsearchUrl}/departments/_search`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
