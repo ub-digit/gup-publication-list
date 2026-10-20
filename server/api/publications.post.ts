@@ -58,10 +58,12 @@ const body: any = {
 }
 
   // --- Example: handle gupPersonIds if it exists in the filter ---
-  const userIds = filter.selectedPersons
-    ? (Array.isArray(filter.selectedPersons)
-        ? filter.selectedPersons
-        : String(filter.selectedPersons).split(',').map((id: string) => Number(id.trim())).filter(Boolean))
+  const userIds = filter.gupPersonIds
+    ? (Array.isArray(filter.gupPersonIds)
+        ? filter.gupPersonIds
+        : String(filter.gupPersonIds).split(','))
+        .map((id: string | number) => Number(id))
+        .filter(Number.isFinite)
     : []
 
   if (userIds.length > 0) {

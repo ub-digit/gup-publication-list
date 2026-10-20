@@ -25,10 +25,15 @@ onMounted(async () => {
     filters.value.sortBy = 'year'
   }
 
-  await Promise.all([
+  const requestId = ++institutionRequestId
+  const [availableInstitutions] = await Promise.all([
     loadInstitutions(),
     loadPublicationTypes()
   ])
+
+  if (requestId === institutionRequestId && availableInstitutions) {
+    institutions.value = availableInstitutions
+  }
 })
 
 
@@ -50,10 +55,10 @@ const loadPersons = async (query: string): Promise<Person[]> => {
 
 
     const persons = raw.map((p: Person) => ({
-      //id: p.id,
-      //names: p.names,
+      ...p,
       label: getPrimaryFullName(p.names),
-      value: getGupPersonIds(p.names), // single value for Multiselect
+      value: p.id,
+      gupPersonIds: getGupPersonIds(p.names)
     }))
 
     // alert('Loaded persons: ' + JSON.stringify(persons))
@@ -136,19 +141,19 @@ const loadProjects = async (): Promise<{ label: string; value: number }[]> => {
 }
 
 
-const loadInstitutions = async () => {
+const loadInstitutions = async (facultyId = filters.value.facultyId) => {
   try {
     const response = await $fetch('/api/publications/institutions', {
       method: 'GET',
       params: {
-        parentId: filters.value.facultyId || undefined
+        parentId: facultyId || undefined
       }
     })
 
-    institutions.value = response || []
+    return response || []
   } catch (error) {
     console.error('Failed to load institutions:', error)
-    institutions.value = []
+    return null
   }
 }
 
@@ -225,13 +230,30 @@ watch(
 )
 
 const institutions = ref<{ label: string; value: string }[]>([])
+let institutionRequestId = 0
 
 watch(
   () => filters.value.facultyId,
-  async () => {
-    await loadInstitutions()
+  async (facultyId) => {
+    const requestId = ++institutionRequestId
+    const availableInstitutions = await loadInstitutions(facultyId)
+
+    // Ignore a slower response for a faculty that is no longer selected.
+    if (requestId !== institutionRequestId || !availableInstitutions) return
+
+    institutions.value = availableInstitutions
+
+    const availableInstitutionIds = new Set(
+      availableInstitutions.map(institution => String(institution.value))
+    )
+    const hasInstitutionOutsideFaculty = filters.value.institutionIds.some(
+      institutionId => !availableInstitutionIds.has(String(institutionId))
+    )
+
+    if (hasInstitutionOutsideFaculty) {
+      filters.value.institutionIds = []
+    }
   },
-  { deep: true }
 )
 
 // Filter function to only allow numeric input
@@ -386,6 +408,7 @@ const numericInputFilter = (input: string): boolean => {
           :clear-on-select="true"
           :options="loadPersons"
           label="label"
+          :object="true"
         />
       </div>
 
@@ -394,6 +417,7 @@ const numericInputFilter = (input: string): boolean => {
         <Multiselect
           id="publication-type"
           v-model="filters.publicationTypeIds"
+          mode="tags"
           :options="loadPublicationTypes"
           placeholder="Publikationstyp"
           :can-clear="true"
@@ -421,6 +445,7 @@ const numericInputFilter = (input: string): boolean => {
         <Multiselect
           id="series"
           v-model="filters.seriesIds"
+          mode="tags"
           :options="loadSeries"
           placeholder="Serie (Gu)"
           :can-clear="true"
@@ -435,6 +460,7 @@ const numericInputFilter = (input: string): boolean => {
         <Multiselect
           id="institution"
           v-model="filters.institutionIds"
+          mode="tags"
           :options="institutions"
           placeholder="Institution"
           :can-clear="true"
@@ -447,6 +473,7 @@ const numericInputFilter = (input: string): boolean => {
         <Multiselect
           id="project"
           v-model="filters.projectIds"
+          mode="tags"
           :options="loadProjects"
           placeholder="Projekt (EU-finansierat)"
           :can-clear="true"

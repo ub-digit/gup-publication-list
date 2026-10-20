@@ -1,16 +1,87 @@
 <script setup lang="ts">
 import PublicationFilter from '~/components/PublicationFilter.vue'
+import type { Filter } from '#shared/types/filter'
 
-// this object will grow with more filter fields
-const filter = ref({
-  searchTerm: '',
-  // yearFrom: null,
-  // yearTo: null,
-  authors: [],
-  // organizations: [],
-  // publicationTypes: [],
-  // ...
+const route = useRoute()
+const router = useRouter()
+
+const queryValue = (value: string | string[] | null | undefined): string | undefined =>
+  Array.isArray(value) ? value[0] : value ?? undefined
+
+const queryValues = (value: string | string[] | null | undefined): string[] =>
+  (Array.isArray(value) ? value : value ? [value] : []).filter(Boolean)
+
+const numberValues = (value: string | string[] | null | undefined): number[] =>
+  queryValues(value).map(Number).filter(Number.isFinite)
+
+const numberValue = (value: string | string[] | null | undefined): number | null => {
+  const parsed = Number(queryValue(value))
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+const values = <T>(value: T | T[] | null | undefined): T[] =>
+  Array.isArray(value) ? value : value == null ? [] : [value]
+
+const filterFromQuery = (query: typeof route.query): Filter => {
+  const sortBy = queryValue(query.sortBy)
+
+  return {
+    searchTerm: queryValue(query.searchTerm) ?? '',
+    selectedPersons: [],
+    startYear: numberValue(query.startYear),
+    endYear: numberValue(query.endYear),
+    publicationTypeIds: numberValues(query.publicationTypeIds),
+    institutionIds: queryValues(query.institutionIds),
+    facultyId: numberValue(query.facultyId),
+    seriesIds: numberValues(query.seriesIds),
+    projectIds: numberValues(query.projectIds),
+    gupPersonIds: numberValues(query.gupPersonIds),
+    peerReviewed: queryValue(query.peerReviewed) === 'true',
+    isOa: queryValue(query.isOa) === 'true',
+    artisticWorkOnly: queryValue(query.artisticWorkOnly) === 'true',
+    sortBy: sortBy === 'title' || sortBy === 'publication_type_id' ? sortBy : 'year'
+  }
+}
+
+const filterToQuery = (value: Filter) => {
+  const publicationTypeIds = values(value.publicationTypeIds).map(String)
+  const institutionIds = values(value.institutionIds)
+  const seriesIds = values(value.seriesIds).map(String)
+  const projectIds = values(value.projectIds).map(String)
+  const gupPersonIds = values(value.gupPersonIds).map(String)
+
+  return {
+    ...(value.searchTerm ? { searchTerm: value.searchTerm } : {}),
+    ...(value.startYear ? { startYear: String(value.startYear) } : {}),
+    ...(value.endYear ? { endYear: String(value.endYear) } : {}),
+    ...(publicationTypeIds.length ? { publicationTypeIds } : {}),
+    ...(institutionIds.length ? { institutionIds } : {}),
+    ...(value.facultyId ? { facultyId: String(value.facultyId) } : {}),
+    ...(seriesIds.length ? { seriesIds } : {}),
+    ...(projectIds.length ? { projectIds } : {}),
+    ...(gupPersonIds.length ? { gupPersonIds } : {}),
+    ...(value.peerReviewed ? { peerReviewed: 'true' } : {}),
+    ...(value.isOa ? { isOa: 'true' } : {}),
+    ...(value.artisticWorkOnly ? { artisticWorkOnly: 'true' } : {}),
+    ...(value.sortBy && value.sortBy !== 'year' ? { sortBy: value.sortBy } : {})
+  }
+}
+
+const filter = ref<Filter>(filterFromQuery(route.query))
+
+watch(() => route.query, (query) => {
+  const nextFilter = filterFromQuery(query)
+  if (JSON.stringify(nextFilter) !== JSON.stringify(filter.value)) {
+    filter.value = nextFilter
+  }
 })
+
+watch(filter, (value) => {
+  const query = filterToQuery(value)
+  if (JSON.stringify(query) !== JSON.stringify(route.query)) {
+    void router.replace({ query })
+  }
+}, { deep: true })
 
 const { data: publicationsData, pending, error } = usePublications(filter)
 

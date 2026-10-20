@@ -1,12 +1,13 @@
 import type { Person } from './person'
 
 export interface Filter {
+    searchTerm: string;
     selectedPersons: Person[];
-    startYear: number;
-    endYear: number;
+    startYear: number | null;
+    endYear: number | null;
     publicationTypeIds: number[];
     institutionIds: string[];
-    facultyId: number;
+    facultyId: number | null;
     seriesIds: number[];
     projectIds: number[];
     gupPersonIds: number[];
