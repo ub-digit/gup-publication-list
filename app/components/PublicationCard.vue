@@ -5,17 +5,17 @@
     </NuxtLink>
 
     <p class="meta-row">
-      <span class="label">Författare:</span>
+      <span class="label">{{ $t('publication.authors') }}:</span>
       {{ authorNames }}
     </p>
 
     <p v-if="publication.publication_type_label" class="meta-row">
-      <span class="label">Publikationstyp:</span>
+      <span class="label">{{ $t('publication.publicationType') }}:</span>
       {{ publication.publication_type_label }}
     </p>
 
     <p v-if="publication.pubyear" class="meta-row">
-      <span class="label">Publikationsår:</span>
+      <span class="label">{{ $t('publication.publicationYear') }}:</span>
       {{ publication.pubyear }}
     </p>
   </div>

@@ -153,9 +153,6 @@ const setPage = (page: number) => {
 
 useHead({
   title: 'Gup - Publications',
-  htmlAttrs: {
-    lang: 'sv'
-  },
   link: [
     {
       rel: 'preconnect',
@@ -176,19 +173,19 @@ useHead({
 
 <template>
   <div>
-    <h1>Filtrera publikationer</h1>
+    <h1>{{ $t('results.title') }}</h1>
 
     <!-- the filter component updates the whole object -->
     <PublicationFilter v-model="filter" :year-range="range" />
 
-    <div v-if="pending">Loading publications...</div>
+    <div v-if="pending">{{ $t('results.loading') }}</div>
     <div v-else-if="error">
-      Error loading publications: {{ error.message }}
+      {{ $t('results.loadError', { message: error.message }) }}
     </div>
     <div v-else>
       <!-- Display range information if available -->
       <div v-if="range" class="range-info">
-        <p>Publication range: {{ range.minYear }} - {{ range.maxYear }} Total: {{ total }}</p>
+        <p>{{ $t('results.range', { minYear: range.minYear, maxYear: range.maxYear, total }) }}</p>
       </div>
       
       <publication-card
@@ -197,14 +194,14 @@ useHead({
         :publication="publication"
       />
 
-      <nav v-if="totalPages > 1" class="pagination" aria-label="Sidnavigering">
+      <nav v-if="totalPages > 1" class="pagination" :aria-label="$t('results.pagination')">
         <button
           type="button"
           class="pagination-button pagination-previous"
           :disabled="currentPage === 1"
           @click="setPage(currentPage - 1)"
         >
-          Föreg.
+          {{ $t('results.previous') }}
         </button>
         <button
           v-for="page in pageNumbers"
@@ -223,7 +220,7 @@ useHead({
           :disabled="currentPage === totalPages"
           @click="setPage(currentPage + 1)"
         >
-          Nästa
+          {{ $t('results.next') }}
         </button>
       </nav>
     </div>

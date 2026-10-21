@@ -7,11 +7,13 @@ import Multiselect from '@vueform/multiselect'
 // Parent owns the filter object via v-model
 const filters = defineModel<Filter>({ required: true })
 
-const sortOptions = [
-  { label: 'År', value: 'year' },
-  { label: 'Titel', value: 'title' },
-  { label: 'Publikationstyp', value: 'publication_type_id' }
-]
+const { t } = useI18n()
+
+const sortOptions = computed(() => [
+  { label: t('filter.year'), value: 'year' },
+  { label: t('filter.titleSort'), value: 'title' },
+  { label: t('filter.publicationType'), value: 'publication_type_id' }
+])
 
 // Props to receive the actual year range from the parent
 const props = defineProps<{
@@ -340,18 +342,18 @@ const numericInputFilter = (input: string): boolean => {
 
 <template>
   <form class="filters-form" @submit.prevent>
-    <h2 class="filters-title">Filtrera publikationslistan</h2>
+    <h2 class="filters-title">{{ $t('filter.title') }}</h2>
 
     <!-- Row 1: Startår + Slutår + checkboxes -->
     <div class="filters-row">
       <div class="year-group">
         <div class="field">
-          <label for="start-year">Startår</label>
+          <label for="start-year">{{ $t('filter.startYear') }}</label>
           <Multiselect
             id="start-year"
             v-model="filters.startYear"
             :options="startYearOptions"
-            placeholder="Startår"
+            :placeholder="$t('filter.startYear')"
             :can-clear="true"
             :searchable="true"
             :create-option="true"
@@ -361,12 +363,12 @@ const numericInputFilter = (input: string): boolean => {
         </div>
 
         <div class="field">
-          <label for="end-year">Slutår</label>
+          <label for="end-year">{{ $t('filter.endYear') }}</label>
           <Multiselect
             id="end-year"
             v-model="filters.endYear"
             :options="endYearOptions"
-            placeholder="Slutår"
+            :placeholder="$t('filter.endYear')"
             :can-clear="true"
             :searchable="true"
             :create-option="true"
@@ -379,15 +381,15 @@ const numericInputFilter = (input: string): boolean => {
       <div class="checkboxes">
         <label class="checkbox-label">
           <input type="checkbox" v-model="filters.peerReviewed" id="peer-reviewed" />
-          Endast refereegranskade publikationer
+          {{ $t('filter.peerReviewed') }}
         </label>
          <label class="checkbox-label">
           <input type="checkbox" v-model="filters.artisticWorkOnly" id="is-oa" />
-          Endast konstnärligt arbete
+          {{ $t('filter.artisticOnly') }}
         </label>
         <label class="checkbox-label">
           <input type="checkbox" v-model="filters.isOa" id="is-oa" />
-          Open access
+          {{ $t('filter.openAccess') }}
         </label>
       </div>
     </div>
@@ -395,11 +397,11 @@ const numericInputFilter = (input: string): boolean => {
     <!-- Row 2: Författare + Publikationstyp -->
     <div class="filters-row">
       <div class="field author-field">
-        <label>Författare</label>
+        <label>{{ $t('filter.authors') }}</label>
         <Multiselect
           v-model="filters.selectedPersons"
           mode="tags"
-          placeholder="Författare"
+          :placeholder="$t('filter.authors')"
           :filter-results="false"
           :min-chars="3"
           :resolve-on-load="false"
@@ -413,13 +415,13 @@ const numericInputFilter = (input: string): boolean => {
       </div>
 
       <div class="field pubtype-field">
-        <label for="publication-type">Publikationstyp</label>
+        <label for="publication-type">{{ $t('filter.publicationType') }}</label>
         <Multiselect
           id="publication-type"
           v-model="filters.publicationTypeIds"
           mode="tags"
           :options="loadPublicationTypes"
-          placeholder="Publikationstyp"
+          :placeholder="$t('filter.publicationType')"
           :can-clear="true"
           :searchable="true"
         />
@@ -428,12 +430,12 @@ const numericInputFilter = (input: string): boolean => {
 
     <div class="filters-row">
        <div class="field pubtype-field">
-        <label for="faculty">Fakultet</label>
+        <label for="faculty">{{ $t('filter.faculty') }}</label>
         <Multiselect
           id="faculty"
           v-model="filters.facultyId"
           :options="loadFaculties"
-          placeholder="Fakultet"
+          :placeholder="$t('filter.faculty')"
           :can-clear="true"
           :searchable="true"
           :clear-on-select="true"
@@ -441,13 +443,13 @@ const numericInputFilter = (input: string): boolean => {
       </div>
       
        <div class="field author-field">
-        <label for="series">Serie (Gu)</label>
+        <label for="series">{{ $t('filter.series') }}</label>
         <Multiselect
           id="series"
           v-model="filters.seriesIds"
           mode="tags"
           :options="loadSeries"
-          placeholder="Serie (Gu)"
+          :placeholder="$t('filter.series')"
           :can-clear="true"
           :searchable="true"
         />
@@ -456,26 +458,26 @@ const numericInputFilter = (input: string): boolean => {
 
     <div class="filters-row">
      <div class="field author-field">
-        <label for="institution">Institution</label>
+        <label for="institution">{{ $t('filter.institution') }}</label>
         <Multiselect
           id="institution"
           v-model="filters.institutionIds"
           mode="tags"
           :options="institutions"
-          placeholder="Institution"
+          :placeholder="$t('filter.institution')"
           :can-clear="true"
           :searchable="true"
         />
       </div>
 
       <div class="field pubtype-field">
-        <label for="project">Projekt (EU-finansierat)</label>
+        <label for="project">{{ $t('filter.project') }}</label>
         <Multiselect
           id="project"
           v-model="filters.projectIds"
           mode="tags"
           :options="loadProjects"
-          placeholder="Projekt (EU-finansierat)"
+          :placeholder="$t('filter.project')"
           :can-clear="true"
           :searchable="true"
           :clear-on-select="true"
@@ -485,7 +487,7 @@ const numericInputFilter = (input: string): boolean => {
 
     <div class="filters-row">
       <div class="field">
-        <label for="sort-by">Sortera</label>
+        <label for="sort-by">{{ $t('filter.sort') }}</label>
         <Multiselect
           id="sort-by"
           v-model="filters.sortBy"

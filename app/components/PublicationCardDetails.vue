@@ -6,13 +6,13 @@
       {{ publication.publication_type_label }}
 
       <span v-if="publication.artistic_basis">
-        (Inom konstnärligt arbete)
+        ({{ $t('publication.artisticWork') }})
       </span>
     </div>
 
     <!-- Authors -->
     <div v-if="authors.length" class="meta-row">
-      <div class="label">Författare</div>
+      <div class="label">{{ $t('publication.authors') }}</div>
 
       <div class="value">
         <div
@@ -38,7 +38,7 @@
 
     <!-- Publication year -->
     <div v-if="publication.pubyear" class="meta-row">
-      <div class="label">Publikationsår</div>
+      <div class="label">{{ $t('publication.publicationYear') }}</div>
 
       <div class="value">
         {{ publication.pubyear }}
@@ -47,7 +47,7 @@
 
     <!-- Published in -->
     <div v-if="publishedIn" class="meta-row">
-      <div class="label">Publicerad i</div>
+      <div class="label">{{ $t('publication.publishedIn') }}</div>
 
       <div class="value">
         {{ publishedIn }}
@@ -56,7 +56,7 @@
 
     <!-- Abstract -->
     <div v-if="publication.abstract" class="meta-row">
-      <div class="label">Sammanfattning</div>
+      <div class="label">{{ $t('publication.abstract') }}</div>
 
       <div class="value abstract">
         {{ publication.abstract }}
@@ -65,7 +65,7 @@
 
     <!-- Links -->
     <div v-if="publication.publication_links?.length" class="meta-row">
-      <div class="label">Länkar</div>
+      <div class="label">{{ $t('publication.links') }}</div>
 
       <div class="value">
         <div
@@ -108,7 +108,7 @@
 
     <!-- Categories -->
     <div v-if="categories.length" class="meta-row">
-      <div class="label">Ämnesord</div>
+      <div class="label">{{ $t('publication.subjectTerms') }}</div>
 
       <div class="value">
         <div
@@ -122,7 +122,7 @@
 
     <!-- Keywords -->
     <div v-if="publication.keywords" class="meta-row">
-      <div class="label">Nyckelord</div>
+      <div class="label">{{ $t('publication.keywords') }}</div>
 
       <div class="value">
         {{ publication.keywords }}
@@ -131,7 +131,7 @@
 
     <!-- Language -->
     <div v-if="languageLabel" class="meta-row">
-      <div class="label">Språk</div>
+      <div class="label">{{ $t('publication.language') }}</div>
 
       <div class="value">
         {{ languageLabel }}
@@ -140,7 +140,7 @@
 
     <!-- Project -->
     <div v-if="project" class="meta-row">
-      <div class="label">Projekt</div>
+      <div class="label">{{ $t('publication.project') }}</div>
 
       <div class="value">
         {{ project }}
@@ -149,7 +149,7 @@
 
     <!-- Publisher -->
     <div v-if="publication.publisher" class="meta-row">
-      <div class="label">Förlag</div>
+      <div class="label">{{ $t('publication.publisher') }}</div>
 
       <div class="value">
         {{ publication.publisher }}
@@ -158,7 +158,7 @@
 
     <!-- Additional information -->
     <div v-if="additionalInformation" class="meta-row">
-      <div class="label">Ytterligare information</div>
+      <div class="label">{{ $t('publication.additionalInformation') }}</div>
 
       <div class="value">
         {{ additionalInformation }}
@@ -167,7 +167,7 @@
 
     <!-- Publication ID -->
     <div class="meta-row">
-      <div class="label">Publikations-ID</div>
+      <div class="label">{{ $t('publication.publicationId') }}</div>
 
       <div class="value">
         {{ publication.publication_id }}
@@ -179,7 +179,7 @@
       v-if="publication.publication_identifiers?.length"
       class="meta-row"
     >
-      <div class="label">Identifikatorer</div>
+      <div class="label">{{ $t('publication.identifiers') }}</div>
 
       <div class="value">
         <div
@@ -232,6 +232,8 @@ import type { Publication } from '~/shared/types/publication'
 const props = defineProps<{
   publication: Publication
 }>()
+
+const { t } = useI18n()
 
 /*
  * Authors must be displayed according to their position,
@@ -327,19 +329,8 @@ const additionalInformation = ref<string | null>(null)
 // additionalInformation.value = additionalInformationData...
 
 const languageLabel = computed(() => {
-  const languages: Record<string, string> = {
-    en: 'Engelska',
-    sv: 'Svenska',
-    da: 'Danska',
-    no: 'Norska',
-    fi: 'Finska',
-    de: 'Tyska',
-    fr: 'Franska',
-    es: 'Spanska'
-  }
-
-  return languages[props.publication.publanguage]
-    ?? props.publication.publanguage
+  const language = props.publication.publanguage
+  return t(`publication.languages.${language}`, language)
 })
 </script>
 

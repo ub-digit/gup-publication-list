@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "publications": "Publications",
+    "review": "Review",
+    "statistics": "Statistics",
+    "lists": "Publication lists",
+    "mainMenu": "Main menu"
+  },
+  "filter": {
+    "title": "Filter publication list",
+    "startYear": "Start year",
+    "endYear": "End year",
+    "authors": "Authors",
+    "publicationType": "Publication type",
+    "faculty": "Faculty",
+    "series": "Series (University of Gothenburg)",
+    "institution": "Department",
+    "project": "Project (EU-funded)",
+    "sort": "Sort by",
+    "peerReviewed": "Peer-reviewed publications only",
+    "artisticOnly": "Artistic work only",
+    "openAccess": "Open access",
+    "year": "Year",
+    "titleSort": "Title"
+  },
+  "publication": {
+    "authors": "Authors",
+    "publicationType": "Publication type",
+    "publicationYear": "Publication year",
+    "publishedIn": "Published in",
+    "abstract": "Abstract",
+    "links": "Links",
+    "subjectTerms": "Subject terms",
+    "keywords": "Keywords",
+    "language": "Language",
+    "project": "Project",
+    "publisher": "Publisher",
+    "additionalInformation": "Additional information",
+    "publicationId": "Publication ID",
+    "identifiers": "Identifiers",
+    "artisticWork": "Artistic work",
+    "languages": {
+      "en": "English", "sv": "Swedish", "da": "Danish", "no": "Norwegian",
+      "fi": "Finnish", "de": "German", "fr": "French", "es": "Spanish"
+    }
+  },
+  "results": {
+    "title": "Filter publications",
+    "loading": "Loading publications…",
+    "loadError": "Could not load publications: {message}",
+    "range": "Publication range: {minYear}–{maxYear}. Total: {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "pagination": "Pagination"
+  }
+}

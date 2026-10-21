@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "publications": "Publikationer",
+    "review": "Att granska",
+    "statistics": "Statistik",
+    "lists": "Publikationslistor",
+    "mainMenu": "Huvudmeny"
+  },
+  "filter": {
+    "title": "Filtrera publikationslistan",
+    "startYear": "Startår",
+    "endYear": "Slutår",
+    "authors": "Författare",
+    "publicationType": "Publikationstyp",
+    "faculty": "Fakultet",
+    "series": "Serie (Gu)",
+    "institution": "Institution",
+    "project": "Projekt (EU-finansierat)",
+    "sort": "Sortera",
+    "peerReviewed": "Endast refereegranskade publikationer",
+    "artisticOnly": "Endast konstnärligt arbete",
+    "openAccess": "Open access",
+    "year": "År",
+    "titleSort": "Titel"
+  },
+  "publication": {
+    "authors": "Författare",
+    "publicationType": "Publikationstyp",
+    "publicationYear": "Publikationsår",
+    "publishedIn": "Publicerad i",
+    "abstract": "Sammanfattning",
+    "links": "Länkar",
+    "subjectTerms": "Ämnesord",
+    "keywords": "Nyckelord",
+    "language": "Språk",
+    "project": "Projekt",
+    "publisher": "Förlag",
+    "additionalInformation": "Ytterligare information",
+    "publicationId": "Publikations-ID",
+    "identifiers": "Identifikatorer",
+    "artisticWork": "Inom konstnärligt arbete",
+    "languages": {
+      "en": "Engelska", "sv": "Svenska", "da": "Danska", "no": "Norska",
+      "fi": "Finska", "de": "Tyska", "fr": "Franska", "es": "Spanska"
+    }
+  },
+  "results": {
+    "title": "Filtrera publikationer",
+    "loading": "Laddar publikationer…",
+    "loadError": "Det gick inte att läsa in publikationer: {message}",
+    "range": "Publikationsintervall: {minYear}–{maxYear}. Totalt: {total}",
+    "previous": "Föreg.",
+    "next": "Nästa",
+    "pagination": "Sidnavigering"
+  }
+}

@@ -9,7 +9,7 @@
         <NuxtLink to="/" class="gup-header__app">GUP</NuxtLink>
       </div>
 
-      <nav class="gup-header__nav" aria-label="Huvudmeny">
+      <nav class="gup-header__nav" :aria-label="$t('nav.mainMenu')">
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
@@ -35,29 +35,20 @@
 </template>
 
 <script setup lang="ts">
-const locale = ref<'sv' | 'en'>('sv')
+const { locale, setLocale, t } = useI18n()
 
 const navItems = computed(() =>
-  locale.value === 'sv'
-    ? [
-        { to: '/publikationer', label: 'Publikationer' },
-        { to: '/att-granska', label: 'Att granska' },
-        { to: '/statistik', label: 'Statistik' },
-        { to: '/publikationslistor', label: 'Publikationslistor' },
-      ]
-    : [
-        { to: '/publikationer', label: 'Publications' },
-        { to: '/att-granska', label: 'Review' },
-        { to: '/statistik', label: 'Statistics' },
-        { to: '/publikationslistor', label: 'Publication lists' },
-      ]
+  [
+    { to: '/publikationer', label: t('nav.publications') },
+    { to: '/att-granska', label: t('nav.review') },
+    { to: '/statistik', label: t('nav.statistics') },
+    { to: '/publikationslistor', label: t('nav.lists') }
+  ]
 )
 
 const localeLabel = computed(() => (locale.value === 'sv' ? 'English' : 'Svenska'))
 
-function toggleLocale() {
-  locale.value = locale.value === 'sv' ? 'en' : 'sv'
-}
+const toggleLocale = () => setLocale(locale.value === 'sv' ? 'en' : 'sv')
 </script>
 
 <style scoped>
