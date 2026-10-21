@@ -9,7 +9,9 @@ export default defineEventHandler(async (event) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      size: 10,
+      // Fetch a wider candidate set before excluding people without
+      // publications; the UI still receives the best 10 results below.
+      size: 100,
       query: {
         bool: {
           must: [{
@@ -43,10 +45,10 @@ export default defineEventHandler(async (event) => {
       .filter(Number.isFinite)
   ))]
 
-  if (personIds.length === 0) return personHits.map(hit => hit._source)
+  if (personIds.length === 0) return []
 
-  // Count publications for all matched people in one request, then use those
-  // counts to promote authors represented in the GUP publication index.
+  // Count publications for all matched people in one request. People without
+  // GUP publications are excluded, and X_ACCOUNT identities rank first.
   const publicationResponse = await fetch(`${config.elasticsearchUrl}/publications/_search`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -87,11 +89,20 @@ export default defineEventHandler(async (event) => {
         (count: number, name: { gup_person_id?: number }) => count + (publicationCounts.get(Number(name.gup_person_id)) || 0),
         0
       )
-      return { person: hit._source, publicationCount, score: hit._score, index }
+      const hasXAccount = (hit._source.identifiers || []).some(
+        (identifier: { code?: string }) => identifier.code === 'X_ACCOUNT'
+      )
+
+      return { person: hit._source, publicationCount, hasXAccount, score: hit._score, index }
     })
+    .filter(result => result.publicationCount > 0)
     .sort((left, right) =>
-      right.publicationCount - left.publicationCount || right.score - left.score || left.index - right.index
+      Number(right.hasXAccount) - Number(left.hasXAccount) ||
+      right.publicationCount - left.publicationCount ||
+      right.score - left.score ||
+      left.index - right.index
     )
+    .slice(0, 10)
     .map(({ person }) => person)
 })
 
