@@ -14,7 +14,8 @@
 }
 
 .app-main {
-  min-width: 768px;
+  min-width: 0;
+  width: 100%;
   max-width: 992px;
   margin: 0 auto;
   padding: 24px 16px;

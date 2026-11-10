@@ -176,18 +176,19 @@ useHead({
     <h1>{{ $t('results.title') }}</h1>
 
     <!-- the filter component updates the whole object -->
-    <PublicationFilter v-model="filter" :year-range="range" />
+    <PublicationFilter v-model="filter" :year-range="range">
+      <template #result-count>
+        <p v-if="!pending && !error" class="result-count" role="status">
+          {{ $t('results.count', { total }) }}
+        </p>
+      </template>
+    </PublicationFilter>
 
     <div v-if="pending">{{ $t('results.loading') }}</div>
     <div v-else-if="error">
       {{ $t('results.loadError', { message: error.message }) }}
     </div>
     <div v-else>
-      <!-- Display range information if available -->
-      <div v-if="range" class="range-info">
-        <p>{{ $t('results.range', { minYear: range.minYear, maxYear: range.maxYear, total }) }}</p>
-      </div>
-      
       <publication-card
         v-for="publication in publications"
         :key="publication.id"
@@ -207,13 +208,14 @@ useHead({
           v-for="page in pageNumbers"
           :key="page"
           type="button"
-          class="pagination-button"
+          class="pagination-button pagination-number"
           :class="{ active: page === currentPage }"
           :aria-current="page === currentPage ? 'page' : undefined"
           @click="setPage(page)"
         >
           {{ page }}
         </button>
+        <span class="pagination-status" aria-live="polite">{{ $t('results.pageStatus', { page: currentPage, total: totalPages }) }}</span>
         <button
           type="button"
           class="pagination-button pagination-next"
@@ -228,18 +230,10 @@ useHead({
 </template>
 
 <style scoped>
-.range-info {
-  background-color: #f0f8ff;
-  border: 1px solid #b0e0e6;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 20px;
-  font-family: 'Open Sans', sans-serif;
-}
-
-.range-info p {
+.result-count {
   margin: 0;
-  font-weight: 500;
+  font-weight: 700;
+  text-align: center;
 }
 
 .pagination {
@@ -249,8 +243,8 @@ useHead({
 }
 
 .pagination-button {
-  min-width: 34px;
-  height: 34px;
+  min-width: 44px;
+  min-height: 44px;
   margin-left: -1px;
   padding: 0 12px;
   color: #0067b1;
@@ -284,5 +278,13 @@ useHead({
 .pagination-button:disabled {
   color: #999;
   cursor: not-allowed;
+}
+
+.pagination-status { display: none; }
+@media (max-width: 767px) {
+  .pagination { align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pagination-number { display: none; }
+  .pagination-status { display: block; text-align: center; }
+  .pagination-button { margin: 0; border-radius: 4px; }
 }
 </style>

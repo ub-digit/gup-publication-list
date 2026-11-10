@@ -73,3 +73,11 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## GUP management link
+
+Set `NUXT_GUP_URL` to the browser-accessible base URL of GUP. For the local
+`docker-gup-frontend-1` container, use `http://localhost:8181` (host port 8181
+for container port 4200). When accessing the app from another computer, replace
+`localhost` with the Docker host's hostname. Both Compose configurations pass
+this variable to Nuxt at runtime. Recreate the app container after changing it.

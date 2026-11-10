@@ -1,5 +1,5 @@
 <template>
-  <header class="gup-header">
+  <header class="gup-header" @keydown.esc="closeMenu(true)">
     <div class="gup-header__inner">
       <div class="gup-header__brand">
         <NuxtLink to="/" class="gup-header__org">
@@ -9,26 +9,25 @@
         <NuxtLink to="/" class="gup-header__app">GUP</NuxtLink>
       </div>
 
-      <nav class="gup-header__nav" :aria-label="$t('nav.mainMenu')">
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          class="gup-header__link"
-          active-class="is-active"
-        >
-          {{ item.label }}
-        </NuxtLink>
-      </nav>
+      <button type="button" class="gup-header__lang" @click="toggleLocale">{{ localeLabel }}</button>
+      <button ref="menuButton" type="button" class="gup-header__menu-button"
+        :aria-expanded="menuOpen" aria-controls="header-menu" @click="menuOpen = !menuOpen">
+        {{ menuOpen ? $t('nav.closeMenu') : $t('nav.openMenu') }}
+      </button>
+      <div id="header-menu" class="gup-header__menu" :class="{ 'is-open': menuOpen }">
+        <nav class="gup-header__nav" :aria-label="$t('nav.mainMenu')">
+          <NuxtLink
+            v-for="item in navItems"
+            :key="item.to"
+            :to="item.to"
+            class="gup-header__link"
+            active-class="is-active"
+            @click="closeMenu(true)"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </nav>
 
-      <div class="gup-header__actions">
-        <button type="button" class="gup-header__lang" @click="toggleLocale">
-          {{ localeLabel }}
-        </button>
-        <NuxtLink to="/login" class="gup-header__user">
-          <span class="gup-header__user-icon" aria-hidden="true">👤</span>
-          xblars
-        </NuxtLink>
       </div>
     </div>
   </header>
@@ -36,12 +35,18 @@
 
 <script setup lang="ts">
 const { locale, setLocale, t } = useI18n()
+const menuOpen = ref(false)
+const menuButton = ref<HTMLButtonElement | null>(null)
+const route = useRoute()
+const closeMenu = (restoreFocus = false) => {
+  if (!menuOpen.value) return
+  menuOpen.value = false
+  if (restoreFocus) menuButton.value?.focus()
+}
+watch(() => route.fullPath, () => closeMenu())
 
 const navItems = computed(() =>
   [
-    { to: '/publikationer', label: t('nav.publications') },
-    { to: '/att-granska', label: t('nav.review') },
-    { to: '/statistik', label: t('nav.statistics') },
     { to: '/publikationslistor', label: t('nav.lists') }
   ]
 )
@@ -121,15 +126,7 @@ const toggleLocale = () => setLocale(locale.value === 'sv' ? 'en' : 'sv')
   border-bottom-color: #7eb6e6;
 }
 
-.gup-header__actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.gup-header__lang,
-.gup-header__user {
+.gup-header__lang {
   background: none;
   border: 0;
   color: #fff;
@@ -139,13 +136,37 @@ const toggleLocale = () => setLocale(locale.value === 'sv' ? 'en' : 'sv')
   cursor: pointer;
 }
 
-.gup-header__user {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.gup-header__menu { display: contents; }
+.gup-header__menu-button { display: none; }
+.gup-header__lang { order: 2; margin-left: auto; min-height: 44px; }
+.gup-header__link { min-height: 44px; }
 
-.gup-header__user-icon {
-  font-size: 14px;
+@media (max-width: 959px) {
+  .gup-header__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+  }
+  .gup-header__brand { gap: 8px; min-width: 0; flex-wrap: wrap; }
+  .gup-header__org { font-size: 8px; }
+  .gup-header__app { font-size: 20px; }
+  .gup-header__lang { order: initial; margin: 0; padding: 0 4px; }
+  .gup-header__menu-button {
+    display: block;
+    min-height: 44px;
+    padding: 0 8px;
+    border: 1px solid rgba(255,255,255,.7);
+    border-radius: 4px;
+    color: #fff;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+  }
+  .gup-header__menu { display: none; grid-column: 1 / -1; }
+  .gup-header__menu.is-open { display: block; }
+  .gup-header__nav { flex-direction: column; }
+  .gup-header__link { padding: 10px 0; }
 }
 </style>

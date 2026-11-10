@@ -77,4 +77,9 @@ const authorNames = computed(() =>
   font-weight: 700;
   margin-right: 4px;
 }
+
+.publication-item { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .publication-link h2 { font-size: 20px; }
+}
 </style>

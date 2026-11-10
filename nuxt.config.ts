@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     elasticsearchUrl: '',
-    adminBackendUrl: ''
+    adminBackendUrl: '',
+    gupUrl: ''
   }
 })

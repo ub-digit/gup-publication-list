@@ -10,3 +10,16 @@ body {
 *::after {
   box-sizing: border-box;
 }
+
+body { overflow-wrap: anywhere; }
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid #b04d00;
+  outline-offset: 3px;
+}
+
+.gup-header :focus-visible { outline-color: #fff; }
+
+@media (max-width: 767px) {
+  h1 { font-size: 1.75rem; line-height: 1.25; }
+}

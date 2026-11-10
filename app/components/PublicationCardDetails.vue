@@ -1,5 +1,10 @@
 <template>
   <div class="publication">
+    <div v-if="manageUrl" class="publication-actions">
+      <a :href="manageUrl" class="manage-link">
+        <span aria-hidden="true">🔒</span> {{ $t('publication.manage') }}
+      </a>
+    </div>
     <h1>{{ publication.title }}</h1>
 
     <div class="publication-type">
@@ -234,6 +239,12 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const gupUrl = useState<string>('gup-url')
+const manageUrl = computed(() => {
+  const base = gupUrl.value?.replace(/\/+$/, '')
+  const id = String(props.publication.id || props.publication.publication_id || '').replace(/^gup_/, '')
+  return base && id ? `${base}/publications/show/${encodeURIComponent(id)}` : null
+})
 
 /*
  * Authors must be displayed according to their position,
@@ -335,6 +346,20 @@ const languageLabel = computed(() => {
 </script>
 
 <style scoped>
+.publication-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.manage-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  font-size: 14px;
+}
+
 .publication {
   max-width: 1000px;
   padding: 20px 0 40px;
@@ -443,5 +468,11 @@ a:hover {
   .publication-type {
     font-size: 16px;
   }
+}
+
+.publication { min-width: 0; overflow-wrap: anywhere; }
+.affiliation { max-width: 100%; }
+@media (max-width: 767px) {
+  .publication { padding-top: 8px; }
 }
 </style>

@@ -8,6 +8,7 @@ services:
         GIT_REPO_URL: ${GIT_REPO_URL:?Set GIT_REPO_URL in docker/.env}
         GIT_REVISION: ${GIT_REVISION:?Set GIT_REVISION in docker/.env}
     environment:
+      NUXT_GUP_URL: ${NUXT_GUP_URL:-http://localhost:8181}
       NUXT_ADMIN_BACKEND_URL: ${NUXT_ADMIN_BACKEND_URL}
       NUXT_ELASTICSEARCH_URL: ${NUXT_ELASTICSEARCH_URL}
     ports:

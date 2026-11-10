@@ -337,6 +337,45 @@ const numericInputFilter = (input: string): boolean => {
   flex: 1;
   min-width: 220px;
 }
+
+.results-toolbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.sort-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sort-field label { font-weight: 700; }
+.sort-field .multiselect { width: 144px; min-width: 0; margin: 0; }
+
+.field .multiselect:focus-within, .sort-field .multiselect:focus-within { outline: 3px solid #b04d00; outline-offset: 3px; }
+
+@media (max-width: 767px) {
+  .results-toolbar { grid-template-columns: minmax(0, 1fr); }
+  .sort-field .multiselect { min-height: 44px; font-size: 16px; }
+  .filters-row, .year-group { display: flex; flex-direction: column; gap: 16px; }
+  .year-group, .field, .author-field, .pubtype-field { width: 100%; min-width: 0; }
+  .field label, .checkbox-label { font-size: 16px; }
+  .field .multiselect { min-width: 0; min-height: 44px; font-size: 16px; --ms-tag-font-size: 1rem; }
+  .checkboxes { padding-top: 0; gap: 0; }
+  .checkbox-label { white-space: normal; min-height: 44px; }
+  .checkbox-label input { flex-shrink: 0; }
+  .field :deep(.multiselect-clear) { min-width: 44px; min-height: 44px; justify-content: center; }
+  .field :deep(.multiselect-search) { font-size: 16px; }
+  .field :deep(.multiselect-tag) { max-width: 100%; white-space: normal; }
+  .field :deep(.multiselect-tag-wrapper) { min-width: 0; overflow-wrap: anywhere; white-space: normal; }
+  .field :deep(.multiselect-tag-remove) { flex-shrink: 0; min-width: 44px; min-height: 44px; }
+  .field :deep(.multiselect-option) { white-space: normal; overflow-wrap: anywhere; min-height: 44px; }
+  .field :deep(.multiselect-single-label), .field :deep(.multiselect-placeholder) { min-width: 0; }
+}
 </style>
 
 
@@ -384,7 +423,7 @@ const numericInputFilter = (input: string): boolean => {
           {{ $t('filter.peerReviewed') }}
         </label>
          <label class="checkbox-label">
-          <input type="checkbox" v-model="filters.artisticWorkOnly" id="is-oa" />
+          <input type="checkbox" v-model="filters.artisticWorkOnly" id="artistic-work" />
           {{ $t('filter.artisticOnly') }}
         </label>
         <label class="checkbox-label">
@@ -397,8 +436,9 @@ const numericInputFilter = (input: string): boolean => {
     <!-- Row 2: Författare + Publikationstyp -->
     <div class="filters-row">
       <div class="field author-field">
-        <label>{{ $t('filter.authors') }}</label>
+        <label for="authors">{{ $t('filter.authors') }}</label>
         <Multiselect
+          id="authors"
           v-model="filters.selectedPersons"
           mode="tags"
           :placeholder="$t('filter.authors')"
@@ -485,8 +525,8 @@ const numericInputFilter = (input: string): boolean => {
       </div>
     </div>
 
-    <div class="filters-row">
-      <div class="field">
+    <div class="results-toolbar">
+      <div class="sort-field">
         <label for="sort-by">{{ $t('filter.sort') }}</label>
         <Multiselect
           id="sort-by"
@@ -497,6 +537,7 @@ const numericInputFilter = (input: string): boolean => {
           :can-clear="false" 
         />
       </div>
+      <slot name="result-count" />
     </div>
   </form>
 </template>

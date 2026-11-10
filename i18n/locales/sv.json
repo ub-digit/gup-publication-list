@@ -4,7 +4,9 @@
     "review": "Att granska",
     "statistics": "Statistik",
     "lists": "Publikationslistor",
-    "mainMenu": "Huvudmeny"
+    "mainMenu": "Huvudmeny",
+    "openMenu": "Meny",
+    "closeMenu": "Stäng"
   },
   "filter": {
     "title": "Filtrera publikationslistan",
@@ -24,6 +26,7 @@
     "titleSort": "Titel"
   },
   "publication": {
+    "manage": "Hantera (kräver inloggning)",
     "authors": "Författare",
     "publicationType": "Publikationstyp",
     "publicationYear": "Publikationsår",
@@ -40,17 +43,24 @@
     "identifiers": "Identifikatorer",
     "artisticWork": "Inom konstnärligt arbete",
     "languages": {
-      "en": "Engelska", "sv": "Svenska", "da": "Danska", "no": "Norska",
-      "fi": "Finska", "de": "Tyska", "fr": "Franska", "es": "Spanska"
+      "en": "Engelska",
+      "sv": "Svenska",
+      "da": "Danska",
+      "no": "Norska",
+      "fi": "Finska",
+      "de": "Tyska",
+      "fr": "Franska",
+      "es": "Spanska"
     }
   },
   "results": {
     "title": "Filtrera publikationer",
     "loading": "Laddar publikationer…",
     "loadError": "Det gick inte att läsa in publikationer: {message}",
-    "range": "Publikationsintervall: {minYear}–{maxYear}. Totalt: {total}",
+    "count": "Antal publikationer: {total}",
     "previous": "Föreg.",
     "next": "Nästa",
-    "pagination": "Sidnavigering"
+    "pagination": "Sidnavigering",
+    "pageStatus": "Sida {page} av {total}"
   }
 }

@@ -1,0 +1,27 @@
+services:
+  publication-list:
+    image: node:24.16.0
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 5001"
+    environment:
+      NODE_ENV: development
+      NUXT_GUP_URL: ${NUXT_GUP_URL:-http://localhost:8181}
+      NUXT_ADMIN_BACKEND_URL: ${NUXT_ADMIN_BACKEND_URL}
+      NUXT_ELASTICSEARCH_URL: ${NUXT_ELASTICSEARCH_URL}
+    ports:
+      - "55000:5001"
+    volumes:
+      - ..:/app
+      - node_modules:/app/node_modules
+      - nuxt_cache:/app/.nuxt
+    networks:
+      - gup-admin
+
+volumes:
+  node_modules:
+  nuxt_cache:
+
+networks:
+  gup-admin:
+    name: gup-admin_gup-admin
+    external: true
