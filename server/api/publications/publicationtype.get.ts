@@ -1,9 +1,9 @@
-export default defineEventHandler(async () => {
-    // Load list of publication types from http://localhost:40415/publication_types
+export default defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event)
 
     console.log('Fetching publication types from external API...')
 
-    const response = await fetch('http://localhost:40415/publication_types', {
+    const response = await fetch(`${config.adminBackendUrl}/publication_types`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

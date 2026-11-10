@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    elasticsearchUrl: ''
+    elasticsearchUrl: '',
+    adminBackendUrl: ''
   }
 })

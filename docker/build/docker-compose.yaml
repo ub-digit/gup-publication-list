@@ -1,9 +1,10 @@
 version: '3.7'
 services:
-  admin-frontend:
-    image: docker.ub.gu.se/gup-admin-frontend:${GIT_REVISION}${PLATFORM}
+  publ-ist:
+    image: docker.ub.gu.se/gup-publications-list:${GIT_REVISION}${PLATFORM}
     build:
-      context: ./frontend
+      context: ./pub-list
       args:
         - GIT_REPO_URL=${GIT_REPO_URL}
         - GIT_REVISION=${GIT_REVISION}
+ 
