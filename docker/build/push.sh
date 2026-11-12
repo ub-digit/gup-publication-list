@@ -6,4 +6,4 @@ if [ -n "$1" ]; then
   GIT_REVISION=$1
 fi
 
-docker push docker.ub.gu.se/gup-publications-list:${GIT_REVISION}
+docker push docker.ub.gu.se/gup-publication-list:${GIT_REVISION}

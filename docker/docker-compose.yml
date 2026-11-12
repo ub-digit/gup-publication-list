@@ -1,16 +1,22 @@
 services:
   publication-list:
     image: docker.ub.gu.se/gup-publication-list:${GIT_REVISION}${PLATFORM:-}
+    build:
+      context: ..
+      dockerfile: docker/build/pub-list/dockerfile
+      args:
+        GIT_REPO_URL: ${GIT_REPO_URL:?Set GIT_REPO_URL in docker/.env}
+        GIT_REVISION: ${GIT_REVISION:?Set GIT_REVISION in docker/.env}
     environment:
       NUXT_GUP_URL: ${NUXT_GUP_URL:-http://localhost:8181}
       NUXT_ADMIN_BACKEND_URL: ${NUXT_ADMIN_BACKEND_URL}
       NUXT_ELASTICSEARCH_URL: ${NUXT_ELASTICSEARCH_URL}
     ports:
-      - "127.0.0.1:20600:5001"
-    networks:
-      - gup-admin
+      - "55000:5001"
+    # networks:
+    #   - gup-admin
 
-# networks:
-#   gup-admin:
-#     name: gup-admin
-#     external: true
+networks:
+  gup-admin:
+    name: gup-admin_gup-admin
+    external: true
