@@ -1,6 +1,6 @@
 <template>
   <div class="publication-item">
-    <NuxtLink :to="`/publications/${publication.id}`" class="publication-link">
+    <NuxtLink :to="`/publication/${publication.id}`" class="publication-link">
       <h2>{{ publication.title }}</h2>
     </NuxtLink>
 
