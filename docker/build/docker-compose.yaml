@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   publ-ist:
-    image: docker.ub.gu.se/gup-publications-list:${GIT_REVISION}${PLATFORM}
+    image: docker.ub.gu.se/gup-publication-list:${GIT_REVISION}${PLATFORM}
     build:
       context: ./pub-list
       args:
