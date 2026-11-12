@@ -133,6 +133,38 @@ const range = computed(() => publicationsData.value?.range || null)
 const total = computed(() => publicationsData.value?.total ?? 0)
 const totalPages = computed(() => publicationsData.value?.totalPages ?? 0)
 
+const downloading = ref(false)
+const downloadError = ref(false)
+const downloadLimited = ref(false)
+
+const downloadPublications = async () => {
+  if (downloading.value || pending.value || error.value || total.value === 0) return
+  downloading.value = true
+  downloadError.value = false
+  downloadLimited.value = false
+  try {
+    const response = await $fetch.raw<Blob>('/api/publications/export', {
+      method: 'POST',
+      body: { ...filter.value, selectedPersons: undefined },
+      responseType: 'blob',
+      retry: 0
+    })
+    const url = URL.createObjectURL(response._data!)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'publications.ris'
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadLimited.value = response.headers.get('X-Export-Limited') === 'true'
+  } catch {
+    downloadError.value = true
+  } finally {
+    downloading.value = false
+  }
+}
+
 watch(totalPages, (pages) => {
   if (pages > 0 && currentPage.value > pages) {
     currentPage.value = pages
@@ -182,7 +214,17 @@ useHead({
           {{ $t('results.count', { total }) }}
         </p>
       </template>
+      <template #result-actions>
+        <button type="button" class="download-button"
+          :disabled="downloading || pending || !!error || total === 0"
+          :aria-busy="downloading" @click="downloadPublications">
+          {{ downloading ? $t('results.downloading') : $t('results.download') }}
+        </button>
+      </template>
     </PublicationFilter>
+    <p v-if="downloading" role="status">{{ $t('results.downloading') }}</p>
+    <p v-if="downloadError" class="download-error" role="alert">{{ $t('results.downloadError') }}</p>
+    <p v-if="downloadLimited" role="status">{{ $t('results.downloadLimited') }}</p>
 
     <div v-if="pending">{{ $t('results.loading') }}</div>
     <div v-else-if="error">
@@ -230,6 +272,25 @@ useHead({
 </template>
 
 <style scoped>
+.download-button {
+  justify-self: end;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #37833b;
+  border-radius: 4px;
+  background: #37833b;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.download-button:hover:not(:disabled) { background: #28642b; }
+.download-button:disabled { opacity: .55; cursor: not-allowed; }
+.download-error { color: #a12622; }
+@media (max-width: 767px) {
+  .download-button { justify-self: stretch; }
+}
+
 .result-count {
   margin: 0;
   font-weight: 700;

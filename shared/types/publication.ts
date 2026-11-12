@@ -8,6 +8,7 @@ export interface Publication {
   publication_id: number
 
   title: string
+  publication_type_id?: number
   publication_type_label: string
   artistic_basis: boolean | null
 
@@ -25,6 +26,8 @@ export interface Publication {
 
   publication_links?: PublicationLink[]
 
+  isbn?: string | null
+  url?: string | null
   issn: string | null
   eissn: string | null
 

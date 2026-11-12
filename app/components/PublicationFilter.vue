@@ -538,6 +538,7 @@ const numericInputFilter = (input: string): boolean => {
         />
       </div>
       <slot name="result-count" />
+      <slot name="result-actions" />
     </div>
   </form>
 </template>
