@@ -47,7 +47,7 @@ watch(() => route.fullPath, () => closeMenu())
 
 const navItems = computed(() =>
   [
-    { to: '/publikationslistor', label: t('nav.lists') }
+    { to: '/publications/list', label: t('nav.lists') }
   ]
 )
 

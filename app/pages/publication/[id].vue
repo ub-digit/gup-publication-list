@@ -6,7 +6,7 @@
 <script lang="ts" setup>
 
   const id = useRoute().params.id;
-  const { data, pending } = await useFetch(`/api/publications/${id}`, {});    
+  const { data, pending } = await useFetch(`/api/publications/gup_${id}`, {});    
   useHead({
     title: `Gup - Publication ${id}`,
   });   

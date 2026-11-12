@@ -1,6 +1,6 @@
 <template>
   <div class="publication-item">
-    <NuxtLink :to="`/publication/${publication.id}`" class="publication-link">
+    <NuxtLink :to="`/publication/${stripIdFromGup(publication.id)}`" class="publication-link">
       <h2>{{ publication.title }}</h2>
     </NuxtLink>
 
@@ -33,6 +33,8 @@ const props = defineProps<{
     pubyear?: string | number
   }
 }>()
+
+const stripIdFromGup = (gupId: string) => gupId.replace(/^gup_/, '')
 
 const authorNames = computed(() =>
   props.publication.authors
