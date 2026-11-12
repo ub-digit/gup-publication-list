@@ -49,6 +49,9 @@ const loadPersons = async (query: string): Promise<Person[]> => {
   try {
     const response = await $fetch('/api/persons/persons', {
       method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
       body: { name: query },
     })
 
@@ -91,6 +94,9 @@ const loadFaculties = async (): Promise<{ label: string; value: string }[]> => {
   try {
     const response = await $fetch('/api/publications/faculty', {
       method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      }
     })
 
     return response || []
@@ -105,6 +111,9 @@ const loadSeries = async (): Promise<{ label: string; value: number }[]> => {
   try {
     const response = await $fetch('/api/publications/series', {
       method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      }
     })
 
     return response || []
@@ -119,6 +128,9 @@ const loadPublicationTypes = async (): Promise<{ label: string; value: number }[
   try {
     const response = await $fetch('/api/publications/publicationtype', {
       method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      }
     })
 
     return response || []
@@ -133,6 +145,9 @@ const loadProjects = async (): Promise<{ label: string; value: number }[]> => {
   try {
     const response = await $fetch('/api/publications/projects', {
       method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      }
     })
 
     return response || []
@@ -147,6 +162,9 @@ const loadInstitutions = async (facultyId = filters.value.facultyId) => {
   try {
     const response = await $fetch('/api/publications/institutions', {
       method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      },
       params: {
         parentId: facultyId || undefined
       }

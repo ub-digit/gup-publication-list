@@ -35,6 +35,9 @@ async function submit() {
   try {
     const response = await $fetch('/api/persons/persons', {
       method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
       body: form,
     })
     persons.value = response?.data ?? response ?? []
@@ -71,7 +74,14 @@ async function searchPosts() {
     if (filters.peerReviewedOnly) params.set('peer_reviewed', 'true')
     if (filters.artisticOnly) params.set('artistic', 'true')
 
-    const response = await $fetch(`/api/publications/search?${params.toString()}`)
+    const response = await $fetch(`/api/publications/search?${params.toString()}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
 
     const allAuthorIds = response.flatMap((publication) =>
       publication.authors.map((author) => author.person[0].id)

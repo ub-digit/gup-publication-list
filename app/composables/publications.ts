@@ -10,7 +10,10 @@ export function usePublications(filter: Ref<Record<string, any>> | ComputedRef<R
     // key must change when any part of the filter changes
     () => `publications-${JSON.stringify(filter.value)}`,
     () => $fetch('/api/publications', {
-      method: 'POST',                     // or GET with query if you prefer
+      method: 'POST', 
+      headers: {
+      'Content-Type': 'application/json'
+      },                    // or GET with query if you prefer
       body: filter.value,                 // entire filter object goes to the backend
     }),
     {

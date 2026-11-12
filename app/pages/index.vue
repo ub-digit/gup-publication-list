@@ -145,6 +145,9 @@ const downloadPublications = async () => {
   try {
     const response = await $fetch.raw<Blob>('/api/publications/export', {
       method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
       body: { ...filter.value, selectedPersons: undefined },
       responseType: 'blob',
       retry: 0
